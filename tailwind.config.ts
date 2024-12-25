@@ -16,6 +16,9 @@ export default {
           "Noto Color Emoji",
         ],
       },
+      textColor: {
+        DEFAULT: '#000000',
+      },
     },
   },
   plugins: [],
