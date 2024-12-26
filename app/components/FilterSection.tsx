@@ -6,10 +6,8 @@ interface FilterSectionProps {
 }
 
 export const FilterSection = ({ title, children }: FilterSectionProps) => (
-  <div className="mb-6 border-b pb-4">
-    <h3 className="font-semibold mb-2 text-black">{title}</h3>
-    <div className="space-y-2 ">
-      {children}
-    </div>
+  <div className="border-b pb-3 md:pb-4">
+    <h3 className="font-semibold mb-2 text-xs md:text-sm text-black">{title}</h3>
+    {children}
   </div>
 );

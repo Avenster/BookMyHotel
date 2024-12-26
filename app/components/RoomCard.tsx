@@ -13,8 +13,8 @@ interface RoomCardProps {
 }
 
 const RoomCard = ({
-//   id,
-//   hotelId,
+  //   id,
+  //   hotelId,
   name,
   price,
   capacity,
@@ -22,13 +22,26 @@ const RoomCard = ({
   hotelName,
 }: RoomCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === image_urls.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const previousImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? image_urls.length - 1 : prev - 1
+    );
+  };
 
   return (
     <>
       <div className="border rounded-lg overflow-hidden bg-white">
         <div className="relative flex justify-center">
           <img
-            src={image_urls?.[0]}
+            src={image_urls?.[currentImageIndex]}
             onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
               const target = e.target as HTMLImageElement;
               target.src = "/bed.jpeg";
@@ -36,13 +49,21 @@ const RoomCard = ({
             alt={name}
             className="w-[90%] h-60 mt-4 object-cover"
           />
-          <button className="absolute left-3 top-1/2 -translate-y-1/2 p-1 rounded-full">
+          <button
+            onClick={previousImage}
+            className="absolute left-5 top-1/2 text-white -translate-y-1/2 p-1 h-60 mt-2 bg-gradient-to-r from-black/40 to-transparent hover:from-black/60"
+
+          >
             <ChevronLeft size={30} />
           </button>
-          <button className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full">
+          <button
+            onClick={nextImage}
+            className="absolute right-5 top-1/2 text-white -translate-y-1/2 p-1 h-60 mt-2 bg-gradient-to-l from-black/40 to-transparent hover:from-black/60"
+          >
             <ChevronRight size={30} />
           </button>
         </div>
+
         <div className="p-4 flex flex-col">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-xl font-semibold text-black">{name}</h3>

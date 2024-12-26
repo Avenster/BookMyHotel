@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MapPin, Send, Calendar, Users } from "lucide-react";
 
 const HeroSection = () => {
@@ -47,7 +47,6 @@ const HeroSection = () => {
     }
     
     setError("");
-    // Now using the selectedHotel.id for the redirect
     window.location.href = `/hotels/${selectedHotel.id}?checkIn=${checkIn}&checkOut=${checkOut}&persons=${persons}`;
   };
 
@@ -73,11 +72,11 @@ const HeroSection = () => {
               opacity: 0.5,
             }}
           />
-          <div className="max-w-3xl">
-            <h1 className="text-3xl font-light mb-4 text-black">
+          <div className="max-w-4xl">
+            <h1 className="text-2xl md:text-3xl font-light mb-4 text-black">
               Find the Perfect deal, always.
             </h1>
-            <p className="text-gray-600 mb-6">
+            <p className="text-sm md:text-base text-gray-600 mb-6">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde non
               officiis soluta mollitia est optio nobis ipsa delectus quam nemo
               laborum ipsum, quod veniam enim, at numquam aliquid nihil
@@ -85,8 +84,10 @@ const HeroSection = () => {
               Distinctio error illum ab.
             </p>
 
-            <div className="flex items-center gap-4 py-20">
-              <div className="bg-white w-64 px-3 border border-black/10 relative">
+            {/* Search Form Container */}
+            <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 py-8 md:py-20">
+              {/* Location Search */}
+              <div className="bg-white w-full md:w-64 px-3 border border-black/10 relative">
                 <div className="flex items-center gap-2">
                   <MapPin size={20} className="text-blue-500" />
                   <input
@@ -114,9 +115,10 @@ const HeroSection = () => {
                 )}
               </div>
 
-              <div className="flex bg-white border px-2 border-black/10 items-center gap-2">
+              {/* Date Selection */}
+              <div className="flex bg-white border px-2 border-black/10 items-center gap-2 w-full md:w-auto">
                 <Calendar size={20} className="text-blue-500" strokeWidth={1.5} />
-                <div className="border-l border-r px-2">
+                <div className="border-l border-r  flex-1 md:flex-none">
                   <input
                     type="text"
                     value={checkIn}
@@ -124,10 +126,10 @@ const HeroSection = () => {
                     onFocus={(e) => (e.target.type = "date")}
                     onBlur={(e) => (e.target.type = "text")}
                     placeholder="Check-in"
-                    className="p-2 bg-white text-gray-500 outline-none w-24"
+                    className="p-2 bg-white text-gray-500 outline-none w-full min-w-[140px] md:w-24"
                   />
                 </div>
-                <div className="px-2">
+                <div className="px-2 flex-1 md:flex-none">
                   <input
                     type="text"
                     value={checkOut}
@@ -135,17 +137,18 @@ const HeroSection = () => {
                     onFocus={(e) => (e.target.type = "date")}
                     onBlur={(e) => (e.target.type = "text")}
                     placeholder="Check-out"
-                    className="p-2 bg-white text-gray-500 outline-none w-24"
+                    className="p-2 bg-white text-gray-500 outline-none w-full min-w-[140px] md:w-24"
                   />
                 </div>
               </div>
 
-              <div className="bg-white flex items-center gap-2 px-4 border border-black/10">
+              {/* Persons Selection */}
+              <div className="bg-white flex items-center gap-2 px-4 border border-black/10 w-full md:w-auto">
                 <Users size={20} className="text-blue-500" strokeWidth={1.5} />
                 <select 
                   value={persons}
                   onChange={(e) => setPersons(e.target.value)}
-                  className="p-2 outline-none bg-white text-gray-400 appearance-none w-8"
+                  className="p-2 outline-none bg-white text-gray-400 appearance-none w-full md:w-8"
                 >
                   <option>1</option>
                   <option>2</option>
@@ -154,9 +157,10 @@ const HeroSection = () => {
                 </select>
               </div>
 
+              {/* Search Button */}
               <button 
                 onClick={handleSearch}
-                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                className="bg-blue-600 text-white px-6 py-3 md:py-2 rounded hover:bg-blue-700 w-full md:w-auto"
               >
                 Search
               </button>
