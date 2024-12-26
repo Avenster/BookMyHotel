@@ -6,14 +6,14 @@ interface HotelCardProps {
     location: string;
     rating: number;
     price: string;
-    imageUrl?: string;
+    image_url?: string;
   }
   
-  const HotelCard = ({ id, name, location, rating, price }: HotelCardProps) => (
+  const HotelCard = ({ id, name, location, rating, price, image_url }: HotelCardProps) => (
     <Link to={`/hotels/${id}`} className="block">
   <article className="flex flex-col justify-center items-center border rounded overflow-hidden shadow-sm hover:shadow-md transition-shadow">
     <img 
-      src={"/s1.jpeg"} 
+      src={image_url} 
       alt={name} 
       className="w-[90%] h-44 object-cover mt-3"
     />

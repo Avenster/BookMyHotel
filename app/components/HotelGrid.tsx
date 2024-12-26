@@ -31,7 +31,7 @@ const HotelGrid = ({ filters = defaultFilters }) => {
   const [loading, setLoading] = useState(true);
   const pageSize = 6;
 
-  console.log(filters , "filters pass hua bhi h kya");
+  console.log(hotels[0]?.image_url , "filters pass hua bhi h kya");
 
   useEffect(() => {
     fetchHotels();
@@ -205,6 +205,7 @@ const HotelGrid = ({ filters = defaultFilters }) => {
                   name={hotel.name}
                   location={hotel.city}
                   rating={Number(hotel.rating) || 0}
+                  image_url={hotel.image_url}
                   price={calculatePriceRange(hotel.rooms)}
                 />
               ))}
