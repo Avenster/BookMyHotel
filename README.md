@@ -124,10 +124,6 @@ If you find a bug, please open an issue with:
 - Expected behavior
 - Screenshots (if applicable)
 
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
 ## 👥 Author
 
 - [@Avenster](https://github.com/Avenster)
