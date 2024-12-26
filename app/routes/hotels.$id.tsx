@@ -4,6 +4,7 @@ import HotelHeader from "~/components/HotelHeader";
 import Navbar from "~/components/Header";
 import RoomCard from "~/components/RoomCard";
 import HotelDescription from "~/components/HotelDescription";
+import Footer from "~/components/Footer";
 
 export const loader = async ({ params }) => {
   const { id } = params;
@@ -47,6 +48,7 @@ export default function HotelDetail() {
         </div>
       </div>
       <HotelDescription hotelId={hotel.id} />
+      <Footer/>
     </div>
   );
 }

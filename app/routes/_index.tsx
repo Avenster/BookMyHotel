@@ -2,6 +2,7 @@ import type { MetaFunction } from "@remix-run/node";
 import Navbar from "~/components/Header";
 import HeroSection from "~/components/HeroSection";
 import Home from "~/pages/HomePage";
+import Footer from "~/components/Footer";
 
 export const meta: MetaFunction = () => {
   return [
@@ -19,6 +20,7 @@ export default function Index() {
 
           <Home/>
       </main>
+      <Footer />
     </div>
   );
 }
