@@ -12,10 +12,6 @@ interface Hotel {
   }>;
 }
 
-interface HotelGridProps {
-  filters?: Filters;
-}
-
 const defaultFilters: Filters = {
   priceRanges: [],
   ratings: [],
@@ -40,9 +36,7 @@ const HotelGrid = ({ filters = defaultFilters }) => {
     fetchHotels();
   }, [currentPage]);
 
-  // Remove sortBy from fetchHotels dependency since we'll handle sorting separately
   useEffect(() => {
-    // Apply sorting whenever sortBy changes
     const sortedHotels = sortHotels(hotels, sortBy);
     setHotels(sortedHotels);
   }, [sortBy]);
@@ -91,8 +85,6 @@ const HotelGrid = ({ filters = defaultFilters }) => {
           return priceMatch && ratingMatch && cityMatch;
         });
       }
-
-      // Apply current sorting to the filtered hotels
       const sortedHotels = sortBy ? sortHotels(filteredHotels, sortBy) : filteredHotels;
       
       setHotels(sortedHotels);
