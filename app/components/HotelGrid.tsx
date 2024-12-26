@@ -31,8 +31,6 @@ const HotelGrid = ({ filters = defaultFilters }) => {
   const [loading, setLoading] = useState(true);
   const pageSize = 6;
 
-  console.log(hotels[0]?.image_url , "filters pass hua bhi h kya");
-
   useEffect(() => {
     fetchHotels();
     setCurrentPage(1);
@@ -40,7 +38,14 @@ const HotelGrid = ({ filters = defaultFilters }) => {
 
   useEffect(() => {
     fetchHotels();
-  }, [currentPage, sortBy]);
+  }, [currentPage]);
+
+  // Remove sortBy from fetchHotels dependency since we'll handle sorting separately
+  useEffect(() => {
+    // Apply sorting whenever sortBy changes
+    const sortedHotels = sortHotels(hotels, sortBy);
+    setHotels(sortedHotels);
+  }, [sortBy]);
 
   const getPriceRange = (rangeLabel: string): [number, number] => {
     const ranges: { [key: string]: [number, number] } = {
@@ -63,8 +68,6 @@ const HotelGrid = ({ filters = defaultFilters }) => {
 
       const data = await response.json();
       let filteredHotels = data.hotels || [];
-
-      console.log(filteredHotels)
 
       if (filters && Object.values(filters).some(f => f.length > 0)) {
         filteredHotels = filteredHotels.filter(hotel => {
@@ -89,17 +92,18 @@ const HotelGrid = ({ filters = defaultFilters }) => {
         });
       }
 
-      setHotels(filteredHotels);
-      console.log( "Filetered Hotels",filteredHotels);
-      setTotalHotels(filteredHotels.length);
-      setTotalPages(Math.ceil(filteredHotels.length / pageSize));
+      // Apply current sorting to the filtered hotels
+      const sortedHotels = sortBy ? sortHotels(filteredHotels, sortBy) : filteredHotels;
+      
+      setHotels(sortedHotels);
+      setTotalHotels(sortedHotels.length);
+      setTotalPages(Math.ceil(sortedHotels.length / pageSize));
     } catch (error) {
       console.error('Error fetching hotels:', error);
     } finally {
       setLoading(false);
     }
   };
-
 
   const calculatePriceRange = (rooms: Array<{ price: number }> = []): string => {
     if (!rooms || !rooms.length) return "N/A";
@@ -143,6 +147,7 @@ const HotelGrid = ({ filters = defaultFilters }) => {
     setSortBy(e.target.value);
   };
 
+
   const renderPaginationButtons = () => {
     const buttons = [];
     const maxVisiblePages = 3;
@@ -173,74 +178,74 @@ const HotelGrid = ({ filters = defaultFilters }) => {
 
   return (
     <section className="flex-1">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6">
-        <h2 className="text-xl font-semibold text-black">
-          Explore Hotels
-        </h2>
-        <select 
-          className="w-full sm:w-auto p-2 border rounded"
-          value={sortBy}
-          onChange={handleSortChange}
-        >
-          <option value="">Sort by</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-          <option value="rating">Rating</option>
-        </select>
-      </div>
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6">
+      <h2 className="text-xl font-semibold text-black">
+        Explore Hotels
+      </h2>
+      <select 
+        className="w-full sm:w-auto p-2 border rounded"
+        value={sortBy}
+        onChange={handleSortChange}
+      >
+        <option value="">Sort by</option>
+        <option value="price-low">Price: Low to High</option>
+        <option value="price-high">Price: High to Low</option>
+        <option value="rating">Rating</option>
+      </select>
+    </div>
 
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500">Loading hotels...</div>
+    {loading ? (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-gray-500">Loading hotels...</div>
+      </div>
+    ) : (
+      <>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {hotels
+            .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+            .map((hotel) => (
+              <HotelCard
+                key={hotel.id}
+                id={hotel.id}
+                name={hotel.name}
+                location={hotel.city}
+                rating={Number(hotel.rating) || 0}
+                image_url={hotel.image_url}
+                price={calculatePriceRange(hotel.rooms)}
+              />
+            ))}
         </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {hotels
-              .slice((currentPage - 1) * pageSize, currentPage * pageSize)
-              .map((hotel) => (
-                <HotelCard
-                  key={hotel.id}
-                  id={hotel.id}
-                  name={hotel.name}
-                  location={hotel.city}
-                  rating={Number(hotel.rating) || 0}
-                  image_url={hotel.image_url}
-                  price={calculatePriceRange(hotel.rooms)}
-                />
-              ))}
-          </div>
-          
-          {totalHotels > pageSize && (
-            <nav className="flex flex-wrap justify-center gap-2 mt-8" aria-label="Pagination">
-              <button 
-                className={`px-3 py-1 border rounded hover:bg-gray-50 text-gray-700 ${
-                  currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Prev
-              </button>
-              
-              <div className="flex flex-wrap gap-2 justify-center">
-                {renderPaginationButtons()}
-              </div>
-              
-              <button 
-                className={`px-3 py-1 border rounded hover:bg-gray-50 text-black ${
-                  currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </button>
-            </nav>
-          )}
-        </>
-      )}
-    </section>
+        
+        {totalHotels > pageSize && (
+          <nav className="flex flex-wrap justify-center gap-2 mt-8" aria-label="Pagination">
+            <button 
+              className={`px-3 py-1 border rounded hover:bg-gray-50 text-gray-700 ${
+                currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Prev
+            </button>
+            
+            <div className="flex flex-wrap gap-2 justify-center">
+              {renderPaginationButtons()}
+            </div>
+            
+            <button 
+              className={`px-3 py-1 border rounded hover:bg-gray-50 text-black ${
+                currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </nav>
+        )}
+      </>
+    )}
+  </section>
   );
 };
 
