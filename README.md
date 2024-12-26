@@ -46,12 +46,12 @@ cd BookMyHotel
 
 3. Install dependencies:
 ```bash
-npm install
+bun install
 ```
 
 4. Start the development server:
 ```bash
-npm run dev
+bun run dev
 ```
 
 ## 🖥️ Development
@@ -59,7 +59,7 @@ npm run dev
 To run the project in development mode:
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 The application will be available at `http://localhost:3000`
@@ -68,12 +68,12 @@ The application will be available at `http://localhost:3000`
 
 1. Create a production build:
 ```bash
-npm run build
+bun run build
 ```
 
 2. Start the production server:
 ```bash
-npm start
+bun start
 ```
 
 ## 📁 Project Structure
