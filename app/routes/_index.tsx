@@ -1,8 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
 import Navbar from "~/components/Header";
 import HeroSection from "~/components/HeroSection";
-import FilterSidebar from "~/components/FilterSidebar";
-import HotelGrid from "~/components/HotelGrid";
+import Home from "~/pages/HomePage";
 
 export const meta: MetaFunction = () => {
   return [
@@ -17,10 +16,8 @@ export default function Index() {
       <Navbar />
       <main>
         <HeroSection />
-        <div className="max-w-7xl mx-auto px-4 py-8 flex gap-8">
-          <FilterSidebar />
-          <HotelGrid />
-        </div>
+
+          <Home/>
       </main>
     </div>
   );

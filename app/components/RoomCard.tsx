@@ -51,7 +51,7 @@ const RoomCard = ({
           />
           <button
             onClick={previousImage}
-            className="absolute left-5 top-1/2 text-white -translate-y-1/2 p-1 h-60 mt-2 bg-gradient-to-r from-black/40 to-transparent hover:from-black/60"
+            className="absolute left-5 top-1/2  text-white -translate-y-1/2 p-1 h-60 mt-2 bg-gradient-to-r from-black/40 to-transparent hover:from-black/60"
 
           >
             <ChevronLeft size={30} />

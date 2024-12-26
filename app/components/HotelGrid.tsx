@@ -1,23 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import HotelCard from './HotelCard';
+import { Filters } from '../pages';
 
-const HotelGrid = ({ filters }) => {
-  const [hotels, setHotels] = useState([]);
+interface Hotel {
+  id: string;
+  name: string;
+  city: string;
+  rating: number;
+  rooms: Array<{
+    price: number;
+  }>;
+}
+
+interface HotelGridProps {
+  filters?: Filters;
+}
+
+const defaultFilters: Filters = {
+  priceRanges: [],
+  ratings: [],
+  cities: []
+};
+
+const HotelGrid = ({ filters = defaultFilters }) => {
+  const [hotels, setHotels] = useState<Hotel[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalHotels, setTotalHotels] = useState(0);
   const [sortBy, setSortBy] = useState('');
   const [loading, setLoading] = useState(true);
-  const pageSize = 6; // Changed to show 6 items per page
+  const pageSize = 6;
+
+  console.log(filters , "filters pass hua bhi h kya");
 
   useEffect(() => {
     fetchHotels();
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   }, [filters]);
 
   useEffect(() => {
     fetchHotels();
   }, [currentPage, sortBy]);
+
+  const getPriceRange = (rangeLabel: string): [number, number] => {
+    const ranges: { [key: string]: [number, number] } = {
+      'Up to Rs. 1000': [0, 1000],
+      'Rs. 1001 to Rs. 2000': [1001, 2000],
+      'Rs. 2001 to Rs. 5000': [2001, 5000],
+      'Above Rs. 5000': [5001, Infinity]
+    };
+    return ranges[rangeLabel] || [0, Infinity];
+  };
 
   const fetchHotels = async () => {
     try {
@@ -26,39 +59,40 @@ const HotelGrid = ({ filters }) => {
         'https://www.gocomet.com/api/assignment/hotels?page=1&size=100'
       );
 
+      if (!response.ok) throw new Error('Failed to fetch hotels');
+
       const data = await response.json();
-      let allHotels = data.hotels || [];
-      
-      // Apply filters
+      let filteredHotels = data.hotels || [];
+
+      console.log(filteredHotels)
+
       if (filters && Object.values(filters).some(f => f.length > 0)) {
-        allHotels = allHotels.filter(hotel => {
-          const priceRange = Math.max(...hotel.rooms.map(r => r.price));
-          const matchesPrice = filters.priceRanges.length === 0 || filters.priceRanges.some(range => {
+        filteredHotels = filteredHotels.filter(hotel => {
+          const priceMatch = !filters.priceRanges.length || filters.priceRanges.some(range => {
             const [min, max] = getPriceRange(range);
-            return priceRange >= min && priceRange <= max;
+            const maxRoomPrice = Math.max(...(hotel.rooms?.map(r => Number(r.price) || 0) || [0]));
+            return maxRoomPrice >= min && maxRoomPrice <= max;
           });
 
-          const matchesRating = filters.ratings.length === 0 || 
-            filters.ratings.includes(Math.floor(hotel.rating));
+          const ratingMatch = !filters.ratings.length || 
+            filters.ratings.some(rating => {
+              const hotelRating = Number(hotel.rating) || 0;
+              return hotelRating >= rating && hotelRating < rating + 1;
+            });
 
-          const matchesCity = filters.cities.length === 0 || 
-            filters.cities.includes(hotel.city);
+          const cityMatch = !filters.cities.length || 
+            filters.cities.some(city => 
+              hotel.city.toLowerCase() === city.toLowerCase()
+            );
 
-          return matchesPrice && matchesRating && matchesCity;
+          return priceMatch && ratingMatch && cityMatch;
         });
       }
 
-      if (sortBy) {
-        allHotels = sortHotels(allHotels, sortBy);
-      }
-      
-      setHotels(allHotels);
-      setTotalHotels(allHotels.length);
-      setTotalPages(Math.ceil(allHotels.length / pageSize));
-      
-      if (currentPage > Math.ceil(allHotels.length / pageSize)) {
-        setCurrentPage(1);
-      }
+      setHotels(filteredHotels);
+      console.log( "Filetered Hotels",filteredHotels);
+      setTotalHotels(filteredHotels.length);
+      setTotalPages(Math.ceil(filteredHotels.length / pageSize));
     } catch (error) {
       console.error('Error fetching hotels:', error);
     } finally {
@@ -66,53 +100,46 @@ const HotelGrid = ({ filters }) => {
     }
   };
 
-  const getPriceRange = (rangeLabel) => {
-    const ranges = {
-      'Up to Rs. 1000': [0, 1000],
-      'Rs. 1001 to Rs. 5000': [1001, 5000],
-      'Rs. 5001 to Rs. 10000': [5001, 10000],
-      'Above Rs. 10000': [10001, Infinity]
-    };
-    return ranges[rangeLabel] || [0, Infinity];
-  };
 
-  const calculatePriceRange = (rooms) => {
+  const calculatePriceRange = (rooms: Array<{ price: number }> = []): string => {
     if (!rooms || !rooms.length) return "N/A";
-    const prices = rooms.map(room => room.price);
+    const prices = rooms.map(room => Number(room.price) || 0);
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
-    return `₹${minPrice} - ₹${maxPrice}`;
+    return `₹${minPrice.toLocaleString()} - ₹${maxPrice.toLocaleString()}`;
   };
 
-  const sortHotels = (hotelsList, sortType) => {
+  const sortHotels = (hotelsList: Hotel[], sortType: string): Hotel[] => {
     switch (sortType) {
       case 'price-low':
         return [...hotelsList].sort((a, b) => {
-          const aMin = Math.min(...a.rooms.map(r => r.price));
-          const bMin = Math.min(...b.rooms.map(r => r.price));
+          const aMin = Math.min(...(a.rooms?.map(r => Number(r.price) || 0) || [0]));
+          const bMin = Math.min(...(b.rooms?.map(r => Number(r.price) || 0) || [0]));
           return aMin - bMin;
         });
       case 'price-high':
         return [...hotelsList].sort((a, b) => {
-          const aMax = Math.max(...a.rooms.map(r => r.price));
-          const bMax = Math.max(...b.rooms.map(r => r.price));
+          const aMax = Math.max(...(a.rooms?.map(r => Number(r.price) || 0) || [0]));
+          const bMax = Math.max(...(b.rooms?.map(r => Number(r.price) || 0) || [0]));
           return bMax - aMax;
         });
       case 'rating':
-        return [...hotelsList].sort((a, b) => b.rating - a.rating);
+        return [...hotelsList].sort((a, b) => 
+          (Number(b.rating) || 0) - (Number(a.rating) || 0)
+        );
       default:
         return hotelsList;
     }
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
       window.scrollTo(0, 0);
     }
   };
 
-  const handleSortChange = (e) => {
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
   };
 
@@ -177,7 +204,7 @@ const HotelGrid = ({ filters }) => {
                   id={hotel.id}
                   name={hotel.name}
                   location={hotel.city}
-                  rating={hotel.rating}
+                  rating={Number(hotel.rating) || 0}
                   price={calculatePriceRange(hotel.rooms)}
                 />
               ))}

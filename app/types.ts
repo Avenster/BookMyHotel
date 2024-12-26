@@ -11,3 +11,33 @@ export interface HotelCardProps {
     title: string;
     children: React.ReactNode;
   }
+
+  // types.ts
+export interface Room {
+  id: string;
+  name: string;
+  price: number;
+  description?: string;
+}
+
+export interface Hotel {
+  id: string;
+  name: string;
+  city: string;
+  rating: number;
+  rooms: Room[];
+}
+
+export interface Filters {
+  priceRanges: string[];
+  ratings: number[];
+  cities: string[];
+}
+
+export interface HotelGridProps {
+  filters: Filters;
+}
+
+export interface HotelFiltersProps {
+  onFilterChange: (filters: Filters) => void;
+}

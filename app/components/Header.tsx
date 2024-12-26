@@ -32,7 +32,6 @@ const Navbar = () => {
             </a>
           </div>
 
-          {/* Desktop Sign In */}
           <div className="hidden md:flex justify-end items-center w-[40rem]">
             <a href="*" className="text-gray-600 hover:text-blue-600">
               Sign in
