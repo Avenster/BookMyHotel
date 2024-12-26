@@ -106,7 +106,7 @@ const HotelGrid = ({ filters = defaultFilters }) => {
     const prices = rooms.map(room => Number(room.price) || 0);
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
-    return `₹${minPrice.toLocaleString()} - ₹${maxPrice.toLocaleString()}`;
+    return `${minPrice.toLocaleString()} - ₹${maxPrice.toLocaleString()}`;
   };
 
   const sortHotels = (hotelsList: Hotel[], sortType: string): Hotel[] => {
