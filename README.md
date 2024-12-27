@@ -130,7 +130,6 @@ If you find a bug, please open an issue with:
 
 ## 🙏 Acknowledgments
 
-- Thanks to all contributors who have helped shape BookMyHotel
 - Built with [Remix](https://remix.run/)
 - Styled with [Tailwind CSS](https://tailwindcss.com/)
 
