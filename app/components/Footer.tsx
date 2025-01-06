@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
           Built by Ankur Kaushal
         </p>
         <a 
-          href="https://portfolio-group.vercel.app/" 
+          href="https://www.avenster.me/" 
           className="text-blue-600 hover:text-blue-800 text-sm mt-2 sm:mt-0"
         >
           View my portfolio
